@@ -17,6 +17,8 @@ const AWS_CONNECTION_TO_GITHUB_REPO =
 const app = new App();
 
 const stack = new Stack(app, "PipelinesStack");
+
+// Deploy first pipeline that deploys the first 50 resources
 const pipelineA = new CodePipeline(stack, "PipelineA", {
   synth: new ShellStep("Synth", {
     input: CodePipelineSource.connection(
@@ -30,13 +32,11 @@ const pipelineA = new CodePipeline(stack, "PipelineA", {
     primaryOutputDirectory: "build/cloudformation",
   }),
 });
-
 const lambdaStageA = new Stage(app, "LambdaStageA");
 const lambdaStackA = new Stack(lambdaStageA, "LambdaStageA");
 for (let i = 0; i <= 49; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
-  // Generate Lambda handlers
   !fs.existsSync(pathToHandlerDir) &&
     fs.mkdirSync(pathToHandlerDir, { recursive: true });
   fs.writeFileSync(
@@ -55,6 +55,7 @@ for (let i = 0; i <= 49; i++) {
 }
 pipelineA.addStage(lambdaStageA);
 
+// Deploy first pipeline that deploys the next 50 resources
 const pipelineB = new CodePipeline(stack, "PipelineB", {
   synth: new ShellStep("Synth", {
     input: CodePipelineSource.connection(
@@ -73,7 +74,6 @@ const lambdaStackB = new Stack(lambdaStageB, "LambdaStageB");
 for (let i = 50; i <= 99; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
-  // Generate Lambda handlers
   !fs.existsSync(pathToHandlerDir) &&
     fs.mkdirSync(pathToHandlerDir, { recursive: true });
   fs.writeFileSync(
