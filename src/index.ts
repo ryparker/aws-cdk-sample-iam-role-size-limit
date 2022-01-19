@@ -31,14 +31,14 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
   }),
 });
 
-const lambdaStage = new Stage(app, "LambdaStage");
-const lambdaStack = new Stack(lambdaStage, "LambdaStage");
-for (let i = 0; i <= 100; i++) {
+const lambdaStageA = new Stage(app, "LambdaStageA");
+const lambdaStackA = new Stack(lambdaStageA, "LambdaStageA");
+for (let i = 0; i <= 50; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
+  // Generate Lambda handlers
   !fs.existsSync(pathToHandlerDir) &&
     fs.mkdirSync(pathToHandlerDir, { recursive: true });
-
   fs.writeFileSync(
     path.join(pathToHandlerDir, "index.js"),
     `exports.handler = async (event) => {console.log("Hello from Lambda ${i}");};`,
@@ -47,10 +47,34 @@ for (let i = 0; i <= 100; i++) {
     }
   );
 
-  new Function(lambdaStack, `Lambda${i}`, {
+  new Function(lambdaStackA, `Lambda${i}`, {
     code: Code.fromAsset(pathToHandlerDir),
     handler: `index.handler`,
     runtime: Runtime.NODEJS_14_X,
   });
 }
-pipeline.addStage(lambdaStage);
+pipeline.addStage(lambdaStageA);
+
+const lambdaStageB = new Stage(app, "LambdaStageB");
+const lambdaStackB = new Stack(lambdaStageA, "LambdaStageB");
+for (let i = 50; i <= 100; i++) {
+  const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
+
+  // Generate Lambda handlers
+  !fs.existsSync(pathToHandlerDir) &&
+    fs.mkdirSync(pathToHandlerDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(pathToHandlerDir, "index.js"),
+    `exports.handler = async (event) => {console.log("Hello from Lambda ${i}");};`,
+    {
+      flag: "w+",
+    }
+  );
+
+  new Function(lambdaStackB, `Lambda${i}`, {
+    code: Code.fromAsset(pathToHandlerDir),
+    handler: `index.handler`,
+    runtime: Runtime.NODEJS_14_X,
+  });
+}
+pipeline.addStage(lambdaStageB);
