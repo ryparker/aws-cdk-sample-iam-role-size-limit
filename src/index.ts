@@ -33,18 +33,23 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
 
 const lambdaStage = new Stage(app, "LambdaStage");
 const lambdaStack = new Stack(lambdaStage, "LambdaStage");
-for (let i = 0; i <= 200; i++) {
-  // fs.writeFileSync(
-  //   path.join("src", "lambdas", `lambda-${i}.js`),
-  //   `exports.handler = async (event) => {console.log("Hello from Lambda ${i}");};`,
-  //   {
-  //     flag: "w+",
-  //   }
-  // );
+for (let i = 0; i <= 100; i++) {
+  const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
+
+  !fs.existsSync(pathToHandlerDir) &&
+    fs.mkdirSync(pathToHandlerDir, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(pathToHandlerDir, "index.js"),
+    `exports.handler = async (event) => {console.log("Hello from Lambda ${i}");};`,
+    {
+      flag: "w+",
+    }
+  );
 
   new Function(lambdaStack, `Lambda${i}`, {
-    code: Code.fromAsset("src/lambdas"),
-    handler: `lambda-${i}.js.handler`,
+    code: Code.fromAsset(pathToHandlerDir),
+    handler: `index.handler`,
     runtime: Runtime.NODEJS_14_X,
   });
 }
