@@ -16,8 +16,8 @@ const AWS_CONNECTION_TO_GITHUB_REPO =
 
 const app = new App();
 
-const stack = new Stack(app, "pipeline");
-const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
+const stack = new Stack(app, "PipelinesStack");
+const pipelineA = new CodePipeline(stack, "PipelineA", {
   synth: new ShellStep("Synth", {
     input: CodePipelineSource.connection(
       `${GITHUB_ORG}/${GITHUB_REPO}`,
@@ -53,11 +53,24 @@ for (let i = 0; i <= 49; i++) {
     runtime: Runtime.NODEJS_14_X,
   });
 }
-pipeline.addStage(lambdaStageA);
+pipelineA.addStage(lambdaStageA);
 
+const pipelineB = new CodePipeline(stack, "PipelineB", {
+  synth: new ShellStep("Synth", {
+    input: CodePipelineSource.connection(
+      `${GITHUB_ORG}/${GITHUB_REPO}`,
+      GITHUB_BRANCH,
+      {
+        connectionArn: AWS_CONNECTION_TO_GITHUB_REPO,
+      }
+    ),
+    commands: ["yarn install", "yarn build"],
+    primaryOutputDirectory: "build/cloudformation",
+  }),
+});
 const lambdaStageB = new Stage(app, "LambdaStageB");
 const lambdaStackB = new Stack(lambdaStageB, "LambdaStageB");
-for (let i = 50; i <= 60; i++) {
+for (let i = 50; i <= 99; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
   // Generate Lambda handlers
@@ -77,4 +90,4 @@ for (let i = 50; i <= 60; i++) {
     runtime: Runtime.NODEJS_14_X,
   });
 }
-pipeline.addStage(lambdaStageB);
+pipelineB.addStage(lambdaStageB);
