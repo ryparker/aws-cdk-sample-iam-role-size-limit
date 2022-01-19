@@ -20,6 +20,7 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
       }
     ),
     commands: ["yarn install", "yarn build"],
+    primaryOutputDirectory: "build/cloudformation",
   }),
 });
 
