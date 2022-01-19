@@ -31,7 +31,7 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
 
 const lambdaStage = new Stage(app, "LambdaStage");
 const lambdaStack = new Stack(lambdaStage, "lambdas");
-for (let i = 0; i <= 500; i++) {
+for (let i = 0; i <= 250; i++) {
   new Function(lambdaStack, `Lambda${i}`, {
     code: Code.fromInline(`
       exports.handler = async (event) => {
