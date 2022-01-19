@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "bootstrap": "cdk bootstrap",
-    "build": "yarn clean && yarn tsc && yarn cdk synth",
+    "build": "yarn clean && yarn tsc && yarn cdk synth -q",
     "deploy": "cdk deploy",
     "test": "yarn clean && jest",
     "diff": "cdk diff",
