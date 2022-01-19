@@ -30,17 +30,12 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
 });
 
 const lambdaStage = new Stage(app, "LambdaStage");
-const lambdaStack = new Stack(lambdaStage, "lambdas");
-for (let i = 0; i <= 247; i++) {
+const lambdaStack = new Stack(lambdaStage, "LambdaStage");
+for (let i = 0; i <= 100; i++) {
   new Function(lambdaStack, `Lambda${i}`, {
-    code: Code.fromInline(`
-      exports.handler = async (event) => {
-        console.log("Hello from Lambda ${i}");
-      };
-    `),
-    handler: "index.handler",
+    code: Code.fromAsset("src/lambdas"),
+    handler: "hello-world.handler",
     runtime: Runtime.NODEJS_14_X,
   });
 }
-
 pipeline.addStage(lambdaStage);
