@@ -19,7 +19,7 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
           "arn:aws:codestar-connections:us-east-1:495634646531:connection/9230518a-c38f-42ee-b7ec-c9fe9b4ffb0e", // Created using the AWS console * });',
       }
     ),
-    commands: ["yarn install", "yarn build", "yarn synth"],
+    commands: ["yarn install", "yarn build"],
   }),
 });
 
