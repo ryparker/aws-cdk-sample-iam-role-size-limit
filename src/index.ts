@@ -5,6 +5,8 @@ import {
   CodePipelineSource,
 } from "aws-cdk-lib/pipelines";
 import { Function, Code, Runtime } from "aws-cdk-lib/aws-lambda";
+import * as fs from "fs";
+import * as path from "path";
 
 const GITHUB_ORG = "ryparker";
 const GITHUB_REPO = "aws-cdk-sample-iam-role-size-limit";
@@ -32,9 +34,17 @@ const pipeline = new CodePipeline(stack, "AmwayCognitoPipeline", {
 const lambdaStage = new Stage(app, "LambdaStage");
 const lambdaStack = new Stack(lambdaStage, "LambdaStage");
 for (let i = 0; i <= 200; i++) {
+  // fs.writeFileSync(
+  //   path.join("src", "lambdas", `lambda-${i}.js`),
+  //   `exports.handler = async (event) => {console.log("Hello from Lambda ${i}");};`,
+  //   {
+  //     flag: "w+",
+  //   }
+  // );
+
   new Function(lambdaStack, `Lambda${i}`, {
     code: Code.fromAsset("src/lambdas"),
-    handler: "hello-world.handler",
+    handler: `lambda-${i}.js.handler`,
     runtime: Runtime.NODEJS_14_X,
   });
 }
