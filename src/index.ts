@@ -57,7 +57,7 @@ pipeline.addStage(lambdaStageA);
 
 const lambdaStageB = new Stage(app, "LambdaStageB");
 const lambdaStackB = new Stack(lambdaStageB, "LambdaStageB");
-for (let i = 50; i <= 50; i++) {
+for (let i = 50; i <= 51; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
   // Generate Lambda handlers
