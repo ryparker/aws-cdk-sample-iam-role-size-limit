@@ -32,7 +32,7 @@ const pipeline = new CodePipeline(stack, "Pipeline", {
   }),
 });
 const lambdaStage = new Stage(app, "LambdaStage");
-const lambdaStack = new Stack(lambdaStage, "LambdaStage");
+const lambdaStack = new Stack(lambdaStage, "LambdaStack");
 for (let i = 0; i <= 100; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
