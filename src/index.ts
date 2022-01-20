@@ -33,7 +33,7 @@ const pipelineA = new CodePipeline(stack, "PipelineA", {
   }),
 });
 const lambdaStageA = new Stage(app, "LambdaStageA");
-const lambdaStackA = new Stack(lambdaStageA, "LambdaStageA");
+const lambdaStackA = new Stack(lambdaStageA, "LambdaStackA");
 for (let i = 0; i <= 49; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
@@ -70,7 +70,7 @@ const pipelineB = new CodePipeline(stack, "PipelineB", {
   }),
 });
 const lambdaStageB = new Stage(app, "LambdaStageB");
-const lambdaStackB = new Stack(lambdaStageB, "LambdaStageB");
+const lambdaStackB = new Stack(lambdaStageB, "LambdaStackB");
 for (let i = 50; i <= 99; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
