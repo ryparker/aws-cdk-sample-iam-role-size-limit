@@ -16,10 +16,10 @@ const AWS_CONNECTION_TO_GITHUB_REPO =
 
 const app = new App();
 
-const stack = new Stack(app, "PipelinesStack");
+const stack = new Stack(app, "PipelineStack");
 
-// Deploy first pipeline that deploys the first 50 resources
-const pipelineA = new CodePipeline(stack, "PipelineA", {
+// Deploy first pipeline that handles
+const pipeline = new CodePipeline(stack, "Pipeline", {
   synth: new ShellStep("Synth", {
     input: CodePipelineSource.connection(
       `${GITHUB_ORG}/${GITHUB_REPO}`,
@@ -32,9 +32,9 @@ const pipelineA = new CodePipeline(stack, "PipelineA", {
     primaryOutputDirectory: "build/cloudformation",
   }),
 });
-const lambdaStageA = new Stage(app, "LambdaStageA");
-const lambdaStackA = new Stack(lambdaStageA, "LambdaStackA");
-for (let i = 0; i <= 49; i++) {
+const lambdaStage = new Stage(app, "LambdaStage");
+const lambdaStack = new Stack(lambdaStage, "LambdaStage");
+for (let i = 0; i <= 100; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
   !fs.existsSync(pathToHandlerDir) &&
@@ -47,47 +47,10 @@ for (let i = 0; i <= 49; i++) {
     }
   );
 
-  new Function(lambdaStackA, `Lambda${i}`, {
+  new Function(lambdaStack, `Lambda${i}`, {
     code: Code.fromAsset(pathToHandlerDir),
     handler: `index.handler`,
     runtime: Runtime.NODEJS_14_X,
   });
 }
-pipelineA.addStage(lambdaStageA);
-
-// Deploy second pipeline that deploys the next 50 resources
-const pipelineB = new CodePipeline(stack, "PipelineB", {
-  synth: new ShellStep("Synth", {
-    input: CodePipelineSource.connection(
-      `${GITHUB_ORG}/${GITHUB_REPO}`,
-      GITHUB_BRANCH,
-      {
-        connectionArn: AWS_CONNECTION_TO_GITHUB_REPO,
-      }
-    ),
-    commands: ["yarn install", "yarn build"],
-    primaryOutputDirectory: "build/cloudformation",
-  }),
-});
-const lambdaStageB = new Stage(app, "LambdaStageB");
-const lambdaStackB = new Stack(lambdaStageB, "LambdaStackB");
-for (let i = 50; i <= 99; i++) {
-  const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
-
-  !fs.existsSync(pathToHandlerDir) &&
-    fs.mkdirSync(pathToHandlerDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(pathToHandlerDir, "index.js"),
-    `exports.handler = async (event) => {console.log("Hello from Lambda ${i}");};`,
-    {
-      flag: "w+",
-    }
-  );
-
-  new Function(lambdaStackB, `Lambda${i}`, {
-    code: Code.fromAsset(pathToHandlerDir),
-    handler: `index.handler`,
-    runtime: Runtime.NODEJS_14_X,
-  });
-}
-pipelineB.addStage(lambdaStageB);
+pipeline.addStage(lambdaStage);
