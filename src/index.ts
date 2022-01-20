@@ -18,7 +18,6 @@ const app = new App();
 
 const stack = new Stack(app, "PipelineStack");
 
-// Deploy first pipeline that handles
 const pipeline = new CodePipeline(stack, "Pipeline", {
   synth: new ShellStep("Synth", {
     input: CodePipelineSource.connection(
@@ -37,6 +36,7 @@ const lambdaStack = new Stack(lambdaStage, "LambdaStage");
 for (let i = 0; i <= 100; i++) {
   const pathToHandlerDir = path.join("src", "lambdas", `lambda-${i}`);
 
+  // Generate Lambda handler assets
   !fs.existsSync(pathToHandlerDir) &&
     fs.mkdirSync(pathToHandlerDir, { recursive: true });
   fs.writeFileSync(
