@@ -55,7 +55,7 @@ for (let i = 0; i <= 49; i++) {
 }
 pipelineA.addStage(lambdaStageA);
 
-// Deploy first pipeline that deploys the next 50 resources
+// Deploy second pipeline that deploys the next 50 resources
 const pipelineB = new CodePipeline(stack, "PipelineB", {
   synth: new ShellStep("Synth", {
     input: CodePipelineSource.connection(
